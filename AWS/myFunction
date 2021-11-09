@@ -1,0 +1,45 @@
+const AWS = require('aws-sdk');
+
+// Creates the document client specifing the region 
+const ddb = new AWS.DynamoDB.DocumentClient({region: 'us-east-2'});
+
+exports.handler = async (event, context, callback) => {
+    // Captures the requestId from the context message
+    const requestId = context.awsRequestId;
+
+    console.log('Received event:', JSON.stringify(event, null, 2));
+
+    // Handle promise fulfilled/rejected states
+    await createMessage(requestId, event).then(() => {
+        console.log("Added car details:", JSON.stringify(event, null, 2));
+        callback(null, {
+            statusCode: 201,
+            body: event,
+            headers: {
+                'Access-Control-Allow-Origin' : '*'
+            }
+        });
+    }).catch((err) => {
+        console.error("Unable to add car details. Error JSON:", JSON.stringify(err, null, 2));
+    })
+};
+
+// Function createMessage
+// Writes message to DynamoDb table Message 
+function createMessage(requestId, event) {
+    const params = {
+        TableName: 'iotParkingLambdaTable',
+        Item: {
+            'plate_number': event.plate_number,
+            'vehicle_model': event.vehicle_model,
+            'color': event.color,
+            'in_time': event.in_time,
+            'out_time': event.out_time,
+            'slot_alloted': event.slot_alloted
+        }
+    }
+    console.log("Adding a new car details...");
+    return ddb.put(params).promise();
+}
+
+

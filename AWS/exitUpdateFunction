@@ -1,0 +1,77 @@
+'use strict';
+
+const aws = require('aws-sdk');
+const ddb = new aws.DynamoDB.DocumentClient({region: 'us-east-2'});
+
+const docClient = new aws.DynamoDB.DocumentClient();
+
+exports.handler = async (event, context) => {
+ 
+    //read
+ 
+    const params = {
+            TableName: 'parking_lots',
+            Limit: 10
+    };
+
+    const data = await ddb.scan(params).promise();
+    var carIndex = 0; 
+    
+    //console.log("Rumba ", data.Items[0].lot_number);
+    
+    for (let i = 0; i < data.Items.length; i++) {
+        // You now have access to data.
+        console.log("osman ", data.Items[i].lot_number);
+        if(data.Items[i].lot_number == 8){
+            carIndex = i;     
+        }
+    } 
+    
+    console.log("car index ", carIndex);
+    
+    // update
+    
+    console.log("type plate number ", typeof data.Items[carIndex].plate_number);
+    console.log("type in time ", typeof data.Items[carIndex].in_time);
+    
+    console.log("plate number ", data.Items[carIndex].plate_number);
+    
+    // update out time and slot alloted
+    const update_params = {
+        TableName: "iotParkingLambdaTable",
+        Key: {
+            "plate_number": data.Items[carIndex].plate_number
+        },
+        UpdateExpression: "set out_time = :x, slot_alloted = :y",
+        ExpressionAttributeValues: {
+            ":x": event.out_time,
+            ":y": data.Items[carIndex].lot_number
+            }
+        };
+    
+    await docClient.update(update_params, function(err, data) {
+        if (err) console.log(err);
+        else console.log(data);
+    }).promise();
+    
+    // update lot from occupied to available
+    const lot_params = {
+        TableName: "parking_lots",
+        Key: {
+            "lot_number": 8
+        },
+        UpdateExpression: "set booking_time = :x, is_occupied = :y, plate_number = :z",
+        ExpressionAttributeValues: {
+            ":x": "null",
+            ":y": 0,
+            ":z": "null"
+            }
+        };
+    
+    await docClient.update(lot_params, function(err, data) {
+        if (err) console.log(err);
+        else console.log(data);
+    }).promise();
+    
+    return Promise.resolve();
+};

@@ -1,0 +1,40 @@
+'use strict';
+
+const aws = require('aws-sdk');
+
+// It is recommended that we instantiate AWS clients outside the scope of the handler 
+// to take advantage of connection re-use.
+const docClient = new aws.DynamoDB.DocumentClient();
+
+exports.handler = (event, context, callback) => {
+    
+    if(event.lot_number && event.booking_time && event.is_occupied && event.plate_number) {
+    
+        const params = {
+            TableName: "parking_lots",
+            Key: {
+                "lot_number": event.lot_number
+            },
+            UpdateExpression: "set booking_time = :x, is_occupied = :y, plate_number = :z",
+            ExpressionAttributeValues: {
+                ":x": event.booking_time,
+                ":y": event.is_occupied,
+                ":z": event.plate_number
+            }
+        };
+    
+        docClient.update(params, function(err, data) {
+            if (err) console.log(err);
+            else console.log(data);
+        });
+    
+    }else {
+        callback(null, {
+            statusCode: 400,
+            body: 'Bad Request',
+            headers: {
+                'Access-Control-Allow-Origin' : '*'
+            }
+        });
+    }
+};
