@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/app.css">
+   
+    <!--Progress bar occupied/available-->
+    <link rel="stylesheet" href="/css/loading-bar.css" />
+    <script src="/js/loading-bar.js"></script>
+    <!--Progress bar occupied/available-->
+
+    <title>DIBRIS Parking</title>
+
+  </head>
+  <body>
+
+    <!--navbar-->
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">DIBRIS Parking</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="historical_data">Historical data</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!--navbar end-->
+
+    <br>
+    <h2 style="margin-left: 30px;">Parking Lots</h2>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div id="slot1" class="col card m-2">
+          <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+          <div class="card-body">
+            <p class="card-text">Slot 1</p>
+          </div>
+        </div>
+
+        <div id="slot2" class="col card m-2">
+          <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+          <div class="card-body">
+            <p class="card-text">Slot 2</p>
+          </div>
+        </div>
+
+        <div id="slot3" class="col card m-2">
+          <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+          <div class="card-body">
+            <p class="card-text">Slot 3</p>
+          </div>
+        </div>
+
+        <div id="slot4" class="col card m-2">
+          <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+          <div class="card-body">
+            <p class="card-text">Slot 4</p>
+          </div>
+        </div>
+
+        <div id="slot5" class="col card m-2">
+          <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+          <div class="card-body">
+            <p class="card-text">Slot 5</p>
+          </div>
+        </div>
+        </div>
+        <div class="row">
+          <div id="slot6" class="col card m-2">
+            <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+            <div class="card-body">
+              <p class="card-text">Slot 6</p>
+            </div>
+          </div>
+
+          <div id="slot7" class="col card m-2">
+            <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+            <div class="card-body">
+              <p class="card-text">Slot 7</p>
+            </div>
+          </div>
+
+          <div id="slot8" class="col card m-2">
+            <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+            <div class="card-body">
+              <p class="card-text">Slot 8</p>
+            </div>
+          </div>
+
+          <div id="slot9" class="col card m-2"> 
+            <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+            <div class="card-body">
+              <p class="card-text">Slot 9</p>
+            </div>
+          </div>
+
+          <div id="slot10" class="col card m-2">
+            <img class="card-img-top" src="/imgs/car.png" alt="Card image cap">
+            <div class="card-body">
+              <p class="card-text">Slot 10</p>
+            </div>
+          </div>
+          <p><div id="color-gray" class="entry-color"></div>Available lots</p>
+          <p><div id="color-brown" class="entry-color"></div>Occupied lots</p>
+
+        </div>
+
+        <h2 style="margin-left: 30px;">Statistics</h2>
+
+
+    </div>
+
+
+    <!-- Progress bar and pie chart-->
+    <div class="row">
+      <div class="card m-2 p-2 col-md-3">
+          <h2 style="text-align:center;">Available lots</h2>
+          
+          <div style="margin: auto;"  id="myContainer1" class="ldBar label-center" data-preset="circle"></div> 
+
+      </div>  
+      
+      <div class="card m-2 p-2 col-md-3">
+          <h2 style="text-align:center;">Occupied lots</h2>
+          
+          <div style="margin: auto;" id="myContainer2" class="ldBar label-center" data-preset="circle"></div> 
+
+      </div>  
+
+      <div class="card m-2 p-2 col-md-5">
+          <h2 style="text-align:center;">Sedan/SUV ratio</h2>
+          
+          <!-- SEDAN/SUV ratio Pie chart-->
+          <script src="https://cdn.anychart.com/js/8.0.1/anychart-core.min.js"></script>
+          <script src="https://cdn.anychart.com/js/8.0.1/anychart-pie.min.js"></script>
+          <div id="container"></div>
+          <!-- SEDAN/SUV ratio Pie chart-->
+
+
+          <h5><div id="color-gray" class="entry-color"></div>SUV</h5>
+          <h5><div id="color-brown" class="entry-color"></div>Sedan</h5>
+      </div>
+    </div>
+
+
+<script type="text/javascript">
+  // Available Unavailable lots
+
+    fetch( 'https://huqd0i3m0d.execute-api.us-east-2.amazonaws.com/prod',  {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .then((response) => {
+    var json_obj = response.body;
+    
+
+    console.log(json_obj);
+    
+    var available_slots = [];
+    var unavailable_slots = [];
+    for (var vehicle in json_obj) {
+        //console.log(vehicle);
+      if(json_obj[vehicle].is_occupied == 0){
+        available_slots.push(json_obj[vehicle]);
+        //console.log(typeof vehicle);
+        vehicle++; 
+        var slot = "slot" + vehicle;
+        //console.log("vehicle",button);
+        var x = document.getElementById(slot);
+        x.style.background='gray';
+        
+      }else{
+        //console.log(jsonObj2[vehicle]);
+        vehicle++; 
+        var slot = "slot" + vehicle;
+        //console.log("vehicle",button);
+        unavailable_slots.push(json_obj[vehicle]);
+        var x = document.getElementById(slot);
+        x.disabled = true;
+        x.style.background='brown';
+        
+      }
+      
+      
+    }
+    console.log("Available slots")
+    console.log(available_slots);
+    console.log("Unavailable slots")
+    console.log(unavailable_slots);
+    total_slots = available_slots.length + unavailable_slots.length
+    console.log("Total slots ", total_slots);
+    var av_slots = available_slots.length*100/total_slots; 
+    var occ_slots = unavailable_slots.length*100/total_slots;
+    console.log("av slots", av_slots);
+    console.log("occ slots", occ_slots);
+    
+    document.getElementById("myContainer1").ldBar.set(av_slots,true);
+    document.getElementById("myContainer2").ldBar.set(occ_slots,true);
+
+    });
+
+</script>
+
+    <script type="text/javascript">
+      // SEDAN SUV
+      var sedansPercentage;
+      var SUVsPercentage;
+
+      fetch( 'https://huqd0i3m0d.execute-api.us-east-2.amazonaws.com/prod/readHistoricalData',  {
+					method: 'GET'
+				})
+				.then(response => response.json())
+				.then((response) => {
+				
+
+        var json_obj = response.body;
+            
+            
+            var sedans = 0;
+            var SUVs = 0;
+            
+            for (var key of Object.keys(json_obj)) {
+              console.log("key ",key);
+              console.log(json_obj[key]["vehicle_model"]);
+              var formatModel = json_obj[key]["vehicle_model"].split("-");
+              if(formatModel[1] == "Sedan"){
+                sedans++;
+              }else if(formatModel[1] == "SUV"){
+                SUVs++;
+              }
+            }
+
+            console.log("suvs ",SUVs);
+            console.log("sedans ",sedans);
+            var totalVehicles = sedans+SUVs;
+            console.log("total vehicles",totalVehicles);
+            sedansPercentage = sedans*100/totalVehicles;
+            SUVsPercentage = SUVs*100/totalVehicles;
+            console.log("Sedans %", sedansPercentage);
+            console.log("SUV %", SUVsPercentage);
+
+            console.log("sedanspe", sedansPercentage);
+            
+            anychart.onDocumentReady(function() {
+
+            // set the data
+            var data = [
+                {x: "SUVs", value: SUVs},
+                {x: "Sedan", value: sedans}
+            ];
+
+            // create the chart
+            var chart = anychart.pie();
+
+            // set the chart title
+            //chart.title("SEDAN/SUV ratio");
+
+            // add the data
+            chart.data(data);
+
+            // display the chart in the container
+            chart.container('container');
+            chart.draw();
+
+            });
+
+
+				});
+
+
+        
+
+    </script>
+
+    
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>

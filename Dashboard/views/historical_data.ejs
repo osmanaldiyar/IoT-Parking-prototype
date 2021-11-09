@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link type="text/css" href="app.css">
+
+
+    <!-- JQuery for pagination-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!--Bar chart-->
+    <script type="text/javascript" src="/js/TChart.js"></script>
+
+    <title>DIBRIS Parking</title>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  </head>
+  <body>
+
+    <!--navbar-->
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">DIBRIS Parking</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="historical_data">Historical data</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!--navbar end-->
+    <br>
+    <h2 style="margin-left: 750px;">Historical data</h2>
+    <br>
+    
+
+    <div class="container ">
+
+    </div>
+    <div class="container ">
+        <!-- Table structure here -->
+        <table class="table table-light" id="our-table">
+            <thead>
+                <tr>
+                    <th>In Time</th>
+                    <th>Slot Alloted</th>
+                    <th>Vehicle Type</th>
+                    <th>Out Time</th>
+                    <th>Color</th>
+                    <th>License Plate Number</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+    
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="container ">
+        <div id="pagination-wrapper"></div>
+    </div>
+  
+    <script>
+      
+      fetch( 'https://huqd0i3m0d.execute-api.us-east-2.amazonaws.com/prod/readHistoricalData',  {
+					method: 'GET'
+				})
+				.then(response => response.json())
+				.then((response) => {
+                    var json_obj = response.body;
+                    console.log("Json ", json_obj);
+
+
+                        // Pagination start
+                        var tableData = [];
+                        for(var i in json_obj){
+                            //console.log("Object entry ", i, "-", Object.entries(json_obj[i]));
+                            tableData.push(Object.entries(json_obj[i]));
+                        }
+                        //console.log("osman ",tableData);
+
+                        
+                        var state = {
+                            'querySet': tableData,
+                            'page': 1,
+                            'rows': 5,
+                            'window': 5,
+                        }
+
+                        buildTable()
+
+                        function pagination(querySet, page, rows) {
+
+                            var trimStart = (page - 1) * rows
+                            var trimEnd = trimStart + rows
+
+                            var trimmedData = querySet.slice(trimStart, trimEnd)
+
+                            var pages = Math.round(querySet.length / rows);
+
+                            return {
+                                'querySet': trimmedData,
+                                'pages': pages,
+                            }
+                        }
+
+                        function pageButtons(pages) {
+                            var wrapper = document.getElementById('pagination-wrapper')
+
+                            wrapper.innerHTML = ``
+                            console.log('Pages:', pages)
+
+                            var maxLeft = (state.page - Math.floor(state.window / 2))
+                            var maxRight = (state.page + Math.floor(state.window / 2))
+
+                            if (maxLeft < 1) {
+                                maxLeft = 1
+                                maxRight = state.window
+                            }
+
+                            if (maxRight > pages) {
+                                maxLeft = pages - (state.window - 1)
+                                
+                                if (maxLeft < 1){
+                                    maxLeft = 1
+                                }
+                                maxRight = pages
+                            }
+                            
+                            
+
+                            for (var page = maxLeft; page <= maxRight; page++) {
+                                wrapper.innerHTML += `<button value=${page} class="page btn btn-sm btn-info">${page}</button>`
+                            }
+
+                            if (state.page != 1) {
+                                wrapper.innerHTML = `<button value=${1} class="page btn btn-sm btn-info">&#171; First</button>` + wrapper.innerHTML
+                            }
+
+                            if (state.page != pages) {
+                                wrapper.innerHTML += `<button value=${pages} class="page btn btn-sm btn-info">Last &#187;</button>`
+                            }
+
+                            $('.page').on('click', function() {
+                                $('#table-body').empty()
+
+                                state.page = Number($(this).val())
+
+                                buildTable()
+                            })
+
+                        }
+
+
+                        function buildTable() {
+                            var table = $('#table-body')
+
+                            var data = pagination(state.querySet, state.page, state.rows)
+                            var myList = data.querySet
+                            //console.log("data.querySet ", myList);
+                            for (var i in myList) {
+                                //console.log("My list[i] ",myList[i][0]);
+                                var row = `<tr>
+                                        <td>${myList[i][0][1]}</td>
+                                        <td>${myList[i][1][1]}</td>
+                                        <td>${myList[i][2][1]}</td>
+                                        <td>${myList[i][3][1]}</td>
+                                        <td>${myList[i][4][1]}</td>
+                                        <td>${myList[i][5][1]}</td>
+                                        `
+                                table.append(row)
+                            }
+
+                            pageButtons(data.pages)
+                        }
+
+                        // Pagination end
+
+                        // Line chart start
+
+                        var today = new Date();  
+                        //console.log("today ", today);
+                        //console.log("getToday", today.getDate());
+                        var hours = [
+                            ['Time', 'Lots occupied'],
+                            [0,  0],
+                            [1,  0],
+                            [2,  0],
+                            [3,  0],
+                            [4,  0],
+                            [5,  0],
+                            [6,  0],
+                            [7,  0],
+                            [8,  0],
+                            [9,  0],
+                            [10,  0],
+                            [11,  0],
+                            [12,  0],
+                            [13,  0],
+                            [14,  0],
+                            [15,  0],
+                            [16,  0],
+                            [17,  0],
+                            [18,  0],
+                            [19,  0],
+                            [20,  0],
+                            [21,  0],
+                            [22,  0],
+                            [23,  0],
+                            ]
+
+                        for (var i in json_obj) {
+                            console.log("Sassy ", json_obj[i].in_time);
+                            console.log("Date splitted ", json_obj[i].in_time.split("-")[2].split(" ")[0]);
+                            console.log("Sorting ", json_obj[i].in_time.split("-")[2].split(" ")[1].split(":")[0]);
+                            
+                            //if(parseInt(json_obj[i].in_time.split("-")[2].split(" ")[0]) == 5){
+                            if( parseInt(json_obj[i].in_time.split("-")[2].split(" ")[0]) == today.getDate()){
+                                var idx = parseInt(json_obj[i].in_time.split("-")[2].split(" ")[1].split(":")[0], 10) + 1;
+                                console.log("idx ",idx);
+                                hours[idx][1]++;
+                                console.log("hours ", hours);
+                            }else{
+                                console.log("No cars had parking today");
+                            }
+                        }
+
+                        google.charts.load('current', {'packages':['corechart']});
+                        google.charts.setOnLoadCallback(drawChart);
+
+                        function drawChart() {
+                            var data = google.visualization.arrayToDataTable(hours);
+
+                            var options = {
+                            title: 'Lot occupancy for today by hours',
+                            curveType: 'function',
+                            legend: { position: 'bottom' }
+                            };
+
+                            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+                            chart.draw(data, options);
+                        }
+                        // Line chart end
+
+
+                         //Bar chart
+                        var dates = [];
+                        var lots_occupied_in_date = [];
+                        for (var i in json_obj) {
+                            //console.log("json_obj[i].in_time ", json_obj[i].in_time);
+                            var splitted_date = json_obj[i].in_time.split(" ")[0];
+                            console.log("full date ",splitted_date);
+                            //console.log("Date splitted ", splitted_date);
+
+                            if(dates.indexOf(splitted_date) === -1) {
+                                dates.push(splitted_date);
+                                console.log("dates ", dates);
+                                lots_occupied_in_date.push(0);
+                            }
+                            for(var j in dates){
+                                if(splitted_date == dates[j]){
+                                    lots_occupied_in_date[j]++;
+                                }  
+                            }              
+                        }
+                        var data = [];
+                        console.log("lots occupied ", lots_occupied_in_date);
+                        for(var i in dates){
+                            data.push({label: dates[i], value: lots_occupied_in_date[i]});
+                        }
+                        
+                        let myChart = new TChart("example", 600, 450, data);
+                        myChart.drawBarChart({ animation: false })
+                        // Bar chart
+                });
+    </script>
+
+    <h1 style="text-align: center;">Statistics</h1>
+
+    <!--Line chart-->
+    <div id="curve_chart" style="width: 920px; height: 500px; display: inline-block;"></div>
+
+    <!--Bar chart--> 
+    <div style="width: 100px; display: inline-block;" id="example"></div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+  </body>
+</html>
+

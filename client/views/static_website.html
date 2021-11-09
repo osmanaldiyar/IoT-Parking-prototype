@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+    <head>
+
+		<style>
+			.buttons {
+				background-color: #4CAF50; /* Green */
+				border: none;
+				color: white;
+				padding: 15px 32px;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				font-size: 16px;
+				transition-duration: 0.4s;
+			}
+			.buttons:hover {
+				background-color: #e7e7e7;
+				color: black;
+			}
+		</style>
+
+		<script>
+			async function callAwsLambdaFunction() {
+
+					document.getElementById("showlotsButton").style.display = "none";
+
+					fetch( 'https://huqd0i3m0d.execute-api.us-east-2.amazonaws.com/prod',  {
+						method: 'GET'
+					})
+					.then(response => response.json())
+					.then((response) => {
+					var json_obj = response.body;
+					
+
+					console.log(json_obj);
+					
+					var available_slots = [];
+					var unavailable_slots = [];
+					for (var vehicle in json_obj) {
+							//console.log(vehicle);
+						if(json_obj[vehicle].is_occupied == 0){
+							available_slots.push(json_obj[vehicle]);
+							//console.log(typeof vehicle);
+							vehicle++; 
+							var button = "button" + vehicle;
+							//console.log("vehicle",button);
+							var x = document.getElementById(button);
+							x.style.background='green';
+							if (x.style.display === "none") {
+								x.style.display = "inline";
+							} 
+						}else{
+							//console.log(jsonObj2[vehicle]);
+							vehicle++; 
+							var button = "button" + vehicle;
+							//console.log("vehicle",button);
+							unavailable_slots.push(json_obj[vehicle]);
+							var x = document.getElementById(button);
+							x.disabled = true;
+							x.style.background='red';
+							x.style.color='black';
+							if (x.style.display === "none") {
+								x.style.display = "inline";
+							}
+						}
+						
+						
+					}
+					console.log("Available slots")
+					console.log(available_slots);
+					console.log("Unavailable slots")
+					console.log(unavailable_slots);
+
+
+					});
+			}
+
+			async function send_update_to_AWS(buttonId) {
+				var buttonValue = parseInt(document.getElementById(buttonId).value);
+				console.log("button value");
+				console.log(typeof buttonValue);
+
+				[].forEach.call(document.querySelectorAll('.buttons'), function (el) {
+					el.style.visibility = 'hidden';
+				});
+
+				console.log("button value: ",buttonValue)
+				var today = new Date();
+				var current_time = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate() + " " + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+				
+				var data = JSON.parse('<%- data %>');
+
+				var plate_number = data.plate_number;
+
+				document.getElementById("plate_paragraph").innerHTML = "You have successfully booked your lot. Have a nice day " + plate_number + "!";
+
+				console.log("data ", data);
+				console.log("Plate number: ", plate_number);
+				
+				fetch( 'https://huqd0i3m0d.execute-api.us-east-2.amazonaws.com/prod/',  {
+					method: 'POST',
+					body: JSON.stringify({
+						"lot_number": buttonValue,
+						"booking_time": current_time,
+						"is_occupied": 1,
+						"plate_number": plate_number
+					})
+				})
+				.then(response => response.json())
+				.then((response) => {
+					console.log(response);
+					//document.getElementById("messages").innerHTML += "<p>"+message+"</p>"; // Add new message to message list
+				});
+				
+			}
+			
+
+		</script>   
+		<title>Test</title>
+
+    </head>
+    <body>
+		<h1>Welcome to DIBRIS parking</h1>
+
+		<p id="plate_paragraph">Click show available lots and choose one of the available lots please.</p>
+
+        <button style="display: none;" type="button" class="buttons" value=1 id="button1" onclick="send_update_to_AWS('button1')">Lot 1</button>
+		<button style="display: none;" type="button" class="buttons" value=2 id="button2" onclick="send_update_to_AWS('button2')">Lot 2</button>
+		<button style="display: none;" type="button" class="buttons" value=3 id="button3" onclick="send_update_to_AWS('button3')">Lot 3</button>
+		<button style="display: none;" type="button" class="buttons" value=4 id="button4" onclick="send_update_to_AWS('button4')">Lot 4</button>
+		<button style="display: none;" type="button" class="buttons" value=5 id="button5" onclick="send_update_to_AWS('button5')">Lot 5</button>
+		<button style="display: none;" type="button" class="buttons" value=6 id="button6" onclick="send_update_to_AWS('button6')">Lot 6</button>
+		<button style="display: none;" type="button" class="buttons" value=7 id="button7" onclick="send_update_to_AWS('button7')">Lot 7</button>
+		<button style="display: none;" type="button" class="buttons" value=8 id="button8" onclick="send_update_to_AWS('button8')">Lot 8</button>
+		<button style="display: none;" type="button" class="buttons" value=9 id="button9" onclick="send_update_to_AWS('button9')">Lot 9</button>
+		<button style="display: none;" type="button" class="buttons" value=10 id="button10" onclick="send_update_to_AWS('button10')">Lot 10</button>
+
+		<br>
+		<br>
+
+		<button id="showlotsButton"  onclick="callAwsLambdaFunction()">Show available lots</button>
+
+	</body>
+</html>
+
