@@ -170,25 +170,28 @@
     var json_obj = response.body;
     
 
-    console.log(json_obj);
+    console.log("json obj ",json_obj);
     
     var available_slots = [];
     var unavailable_slots = [];
     for (var vehicle in json_obj) {
-        //console.log(vehicle);
+        console.log("vehicle ", vehicle);
       if(json_obj[vehicle].is_occupied == 0){
+        console.log("zero obj ", json_obj[vehicle]);
         available_slots.push(json_obj[vehicle]);
         //console.log(typeof vehicle);
+        
+        var slot = "slot" + json_obj[vehicle].lot_number;
+        console.log("slot ",slot)
         vehicle++; 
-        var slot = "slot" + vehicle;
         //console.log("vehicle",button);
         var x = document.getElementById(slot);
         x.style.background='gray';
         
       }else{
         //console.log(jsonObj2[vehicle]);
+        var slot = "slot" + json_obj[vehicle].lot_number;
         vehicle++; 
-        var slot = "slot" + vehicle;
         //console.log("vehicle",button);
         unavailable_slots.push(json_obj[vehicle]);
         var x = document.getElementById(slot);

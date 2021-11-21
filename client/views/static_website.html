@@ -42,24 +42,25 @@
 						if(json_obj[vehicle].is_occupied == 0){
 							available_slots.push(json_obj[vehicle]);
 							//console.log(typeof vehicle);
-							vehicle++; 
-							var button = "button" + vehicle;
+							var button = "button" + json_obj[vehicle].lot_number;
 							//console.log("vehicle",button);
 							var x = document.getElementById(button);
 							x.style.background='green';
+							vehicle++; 
 							if (x.style.display === "none") {
 								x.style.display = "inline";
 							} 
 						}else{
 							//console.log(jsonObj2[vehicle]);
-							vehicle++; 
-							var button = "button" + vehicle;
+							var button = "button" + json_obj[vehicle].lot_number;
+							
 							//console.log("vehicle",button);
 							unavailable_slots.push(json_obj[vehicle]);
 							var x = document.getElementById(button);
 							x.disabled = true;
 							x.style.background='red';
 							x.style.color='black';
+							vehicle++; 
 							if (x.style.display === "none") {
 								x.style.display = "inline";
 							}
